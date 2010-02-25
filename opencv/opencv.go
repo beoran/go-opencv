@@ -181,6 +181,221 @@ func (self * Image) destroy() {
 }
 
 /*
+vConvertImage(const CvArr* src, CvArr* dst, int flags=0)¶
+
+    Converts one image to another with an optional vertical flip.
+    Parameters: 
+
+        * src – Source image.
+        * dst – Destination image. Must be single-channel or 3-channel 8-bit image.
+        * flags –
+
+          The operation flags:
+              o CV_CVTIMG_FLIP - Flips the image vertically
+              o CV_CVTIMG_SWAP_RB - Swaps the red and blue channels. In OpenCV color images have BGR channel order, however on some systems the order needs to be reversed before displaying the image (ShowImage does this automatically).
+
+    The function cvConvertImage() converts one image to another and flips the result vertically if desired. The function is used by ShowImage.
+
+CreateTrackbar¶
+
+int cvCreateTrackbar(const char* trackbarName, const char* windowName, int* value, int count, CvTrackbarCallback onChange)¶
+
+    Creates a trackbar and attaches it to the specified window
+
+        CV_EXTERN_C_FUNCPTR( void (*CvTrackbarCallback)(int pos) );
+
+    Parameters: 
+
+        * trackbarName – Name of the created trackbar.
+        * windowName – Name of the window which will be used as a parent for created trackbar.
+        * value – Pointer to an integer variable, whose value will reflect the position of the slider. Upon creation, the slider position is defined by this variable.
+        * count – Maximal position of the slider. Minimal position is always 0.
+        * onChange – Pointer to the function to be called every time the slider changes position. This function should be prototyped as void Foo(int); Can be NULL if callback is not required.
+
+    The function cvCreateTrackbar() creates a trackbar (a.k.a. slider or range control) with the specified name and range, assigns a variable to be syncronized with trackbar position and specifies a callback function to be called on trackbar position change. The created trackbar is displayed on the top of the given window.
+
+DestroyAllWindows¶
+
+void cvDestroyAllWindows(void)¶
+
+    Destroys all of the HighGUI windows.
+
+    The function cvDestroyAllWindows() destroys all of the opened HighGUI windows.
+
+DestroyWindow¶
+
+void cvDestroyWindow(const char* name)¶
+
+    Destroys a window.
+    Parameter:  name – Name of the window to be destroyed.
+
+    The function cvDestroyWindow() destroys the window with the given name.
+
+GetTrackbarPos¶
+
+int cvGetTrackbarPos(const char* trackbarName, const char* windowName)¶
+
+    Returns the trackbar position.
+    Parameters: 
+
+        * trackbarName – Name of the trackbar.
+        * windowName – Name of the window which is the parent of the trackbar.
+
+    The function cvGetTrackbarPos() returns the current position of the specified trackbar.
+
+GetWindowHandle¶
+
+void* cvGetWindowHandle(const char* name)¶
+
+    Gets the window’s handle by its name.
+    Parameter:  name – Name of the window.
+
+    The function cvGetWindowHandle() returns the native window handle (HWND in case of Win32 and GtkWidget in case of GTK+).
+
+GetWindowName¶
+
+const char* cvGetWindowName(void* windowHandle)¶
+
+    Gets the window’s name by its handle.
+    Parameter:  windowHandle – Handle of the window.
+
+    The function cvGetWindowName() returns the name of the window given its native handle (HWND in case of Win32 and GtkWidget in case of GTK+).
+
+InitSystem¶
+
+int cvInitSystem(int argc, char** argv)¶
+
+    Initializes HighGUI.
+    Parameters: 
+
+        * argc – Number of command line arguments
+        * argv – Array of command line arguments
+
+    The function cvInitSystem() initializes HighGUI. If it wasn’t called explicitly by the user before the first window was created, it is called implicitly then with argc=0, argv=NULL. Under Win32 there is no need to call it explicitly. Under X Window the arguments may be used to customize a look of HighGUI windows and controls.
+
+MoveWindow¶
+
+void cvMoveWindow(const char* name, int x, int y)¶
+
+    Sets the position of the window.
+    Parameters: 
+
+        * name – Name of the window to be moved.
+        * x – New x coordinate of the top-left corner
+        * y – New y coordinate of the top-left corner
+
+    The function cvMoveWindow() changes the position of the window.
+
+NamedWindow¶
+
+int cvNamedWindow(const char* name, int flags)¶
+
+    Creates a window.
+    Parameters: 
+
+        * name – Name of the window in the window caption that may be used as a window identifier.
+        * flags – Flags of the window. Currently the only supported flag is CV_WINDOW_AUTOSIZE. If this is set, window size is automatically adjusted to fit the displayed image (see ShowImage), and the user can not change the window size manually.
+
+    The function cvNamedWindow() creates a window which can be used as a placeholder for images and trackbars. Created windows are referred to by their names.
+
+    If a window with the same name already exists, the function does nothing.
+
+ResizeWindow¶
+
+void cvResizeWindow(const char* name, int width, int height)¶
+
+    Sets the window size.
+    Parameters: 
+
+        * name – Name of the window to be resized.
+        * width – New width
+        * height – New height
+
+    The function cvResizeWindow() changes the size of the window.
+
+SetMouseCallback¶
+
+void cvSetMouseCallback(const char* windowName, CvMouseCallback onMouse, void* param=NULL)¶
+
+    Assigns callback for mouse events.
+
+        #define CV_EVENT_MOUSEMOVE      0
+        #define CV_EVENT_LBUTTONDOWN    1
+        #define CV_EVENT_RBUTTONDOWN    2
+        #define CV_EVENT_MBUTTONDOWN    3
+        #define CV_EVENT_LBUTTONUP      4
+        #define CV_EVENT_RBUTTONUP      5
+        #define CV_EVENT_MBUTTONUP      6
+        #define CV_EVENT_LBUTTONDBLCLK  7
+        #define CV_EVENT_RBUTTONDBLCLK  8
+        #define CV_EVENT_MBUTTONDBLCLK  9
+
+        #define CV_EVENT_FLAG_LBUTTON   1
+        #define CV_EVENT_FLAG_RBUTTON   2
+        #define CV_EVENT_FLAG_MBUTTON   4
+        #define CV_EVENT_FLAG_CTRLKEY   8
+        #define CV_EVENT_FLAG_SHIFTKEY  16
+        #define CV_EVENT_FLAG_ALTKEY    32
+
+        CV_EXTERN_C_FUNCPTR( void (*CvMouseCallback )(int event,
+                                                    int x,
+                                                    int y,
+                                                    int flags,
+                                                    void* param) );
+
+    Parameter:  windowName – Name of the window.
+
+param onMouse:  Pointer to the function to be called every time a mouse event occurs in the specified window. This function should be prototyped as
+
+void Foo(int event, int x, int y, int flags, void* param)¶
+
+where event is one of CV_EVENT_*, x and y are the coordinates of the mouse pointer in image coordinates (not window coordinates), flags is a combination of CV_EVENT_FLAG, and param is a user-defined parameter passed to the cvSetMouseCallback() function call. :param param: User-defined parameter to be passed to the callback function.
+
+The function cvSetMouseCallback() sets the callback function for mouse events occuring within the specified window. To see how it works, look at
+
+http://opencvlibrary.sourceforge.net/../../samples/c/ffilldemo.c|opencv/samples/c/ffilldemo.c
+SetTrackbarPos¶
+
+void cvSetTrackbarPos(const char* trackbarName, const char* windowName, int pos)¶
+
+    Sets the trackbar position.
+    Parameters: 
+
+        * trackbarName – Name of the trackbar.
+        * windowName – Name of the window which is the parent of trackbar.
+        * pos – New position.
+
+    The function cvSetTrackbarPos() sets the position of the specified trackbar.
+
+ShowImage¶
+
+void cvShowImage(const char* name, const CvArr* image)¶
+
+    Displays the image in the specified window
+    Parameters: 
+
+        * name – Name of the window.
+        * image – Image to be shown.
+
+    The function cvShowImage() displays the image in the specified window. If the window was created with the CV_WINDOW_AUTOSIZE flag then the image is shown with its original size, otherwise the image is scaled to fit in the window. The function may scale the image, depending on its depth:
+
+        * If the image is 8-bit unsigned, it is displayed as is.
+        * If the image is 16-bit unsigned or 32-bit integer, the pixels are divided by 256. That is, the value range [0,255*256] is mapped to [0,255].
+        * If the image is 32-bit floating-point, the pixel values are multiplied by 255. That is, the value range [0,1] is mapped to [0,255].
+
+WaitKey¶
+
+int cvWaitKey(int delay=0)¶
+
+    Waits for a pressed key.
+    Parameter:  delay – Delay in milliseconds.
+
+    The function cvWaitKey() waits for key event infinitely ($ \texttt{delay} <= 0$) or for delay milliseconds. Returns the code of the pressed key or -1 if no key was pressed before the specified time had elapsed.
+
+    Note: This function is the only method in HighGUI that can fetch and handle events, so it needs to be called periodically for normal event processing, unless HighGUI is used within some environment that takes care of event processing.
+
+
+
 void cvAdaptiveThreshold(const CvArr* src, CvArr* dst, double maxValue, int adaptive_method=CV_ADAPTIVE_THRESH_MEAN_C, int thresholdType=CV_THRESH_BINARY, int blockSize=3, double param1=5)¶
 
     Applies an adaptive threshold to an array.
