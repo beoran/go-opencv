@@ -92,7 +92,7 @@ func Error(status int, func_name, err_msg, filename string, line int) {
 
 //The function returns the textual description for the specified error status 
 // code. In the case of unknown status, the function returns a NULL pointer.
-func ErrorStr(status int) string {  
+func ErrorStr(status int) string {
   cstr    := C.cvErrorStr(C.int(status))
   return C.GoString(cstr)
 }
