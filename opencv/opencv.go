@@ -180,48 +180,54 @@ func (self * Image) destroy() {
   fmt.Println("Released!")
 }
 
+// Constants for image.Convert
+const (
+  CVTIMG_FLIP 		= 1
+  CVTIMG_SWAP_RB 	= 2
+)
+
+// Concert converts one image to another with an optional vertical flip.
+func (self * Image) Convert(destination * Image, flags int) {
+  C.cvConvertImage(unsafe.Pointer(self.cimage), unsafe.Pointer(destination.cimage), C.int(flags))  
+} 
+
+type Trackbar struct {
+  handle int;
+  value int;
+
+}  
+
+// CreateTrackbar creates a trackbar and attaches it to the specified window.
+// Does not support callbacks yet.
+func CreateTrackbar(name string, window string, value int, max int) * Trackbar {
+  cname 	:= cstr(name) 	; defer cname.free()
+  cwindow	:= cstr(window)	; defer cwindow.free()
+  cmax	       	:= C.int(max)
+  trackbar     	:= &Trackbar{0, value}
+  cvalue       	:= (* C.int)(unsafe.Pointer(&trackbar.value))
+  chandle      	:= C.cvCreateTrackbar(cname, cwindow, cvalue, cmax, nil)
+  trackbar.handle = int(chandle)
+  return trackbar
+}
+
+// DestroyAllWindows() destroys all of the opened HighGUI windows.
+func DestroyAllWindows() {
+  C.cvDestroyAllWindows()
+}
+
+
+type Window struct {
+  name string
+}
+
+func (self * Window) Destroy() {
+  cname := cstr(self.name) ; defer cname.free()
+  C.cvDestroyWindow(cname)
+}
+
+
+
 /*
-vConvertImage(const CvArr* src, CvArr* dst, int flags=0)¶
-
-    Converts one image to another with an optional vertical flip.
-    Parameters: 
-
-        * src – Source image.
-        * dst – Destination image. Must be single-channel or 3-channel 8-bit image.
-        * flags –
-
-          The operation flags:
-              o CV_CVTIMG_FLIP - Flips the image vertically
-              o CV_CVTIMG_SWAP_RB - Swaps the red and blue channels. In OpenCV color images have BGR channel order, however on some systems the order needs to be reversed before displaying the image (ShowImage does this automatically).
-
-    The function cvConvertImage() converts one image to another and flips the result vertically if desired. The function is used by ShowImage.
-
-CreateTrackbar¶
-
-int cvCreateTrackbar(const char* trackbarName, const char* windowName, int* value, int count, CvTrackbarCallback onChange)¶
-
-    Creates a trackbar and attaches it to the specified window
-
-        CV_EXTERN_C_FUNCPTR( void (*CvTrackbarCallback)(int pos) );
-
-    Parameters: 
-
-        * trackbarName – Name of the created trackbar.
-        * windowName – Name of the window which will be used as a parent for created trackbar.
-        * value – Pointer to an integer variable, whose value will reflect the position of the slider. Upon creation, the slider position is defined by this variable.
-        * count – Maximal position of the slider. Minimal position is always 0.
-        * onChange – Pointer to the function to be called every time the slider changes position. This function should be prototyped as void Foo(int); Can be NULL if callback is not required.
-
-    The function cvCreateTrackbar() creates a trackbar (a.k.a. slider or range control) with the specified name and range, assigns a variable to be syncronized with trackbar position and specifies a callback function to be called on trackbar position change. The created trackbar is displayed on the top of the given window.
-
-DestroyAllWindows¶
-
-void cvDestroyAllWindows(void)¶
-
-    Destroys all of the HighGUI windows.
-
-    The function cvDestroyAllWindows() destroys all of the opened HighGUI windows.
-
 DestroyWindow¶
 
 void cvDestroyWindow(const char* name)¶
@@ -709,11 +715,11 @@ void cvFloodFill(CvArr* image, CvPoint seed_point, CvScalar new_val, CvScalar lo
 
         typedef struct CvConnectedComp
         {
-            double area;    /* area of the segmented component */
-            CvScalar value; /* average color of the connected component */
-            CvRect rect;    /* ROI of the segmented component */
-            CvSeq* contour; /* optional component boundary
-                              (the contour might have child contours corresponding to the holes) */
+            double area;     area of the segmented component
+            CvScalar value;  average color of the connected component 
+            CvRect rect;     ROI of the segmented component 
+            CvSeq* contour;  optional component boundary
+                              (the contour might have child contours corresponding to the holes) 
         } CvConnectedComp;
 
         #define CV_FLOODFILL_FIXED_RANGE (1 << 16)
