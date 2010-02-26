@@ -35,7 +35,7 @@ func frobnicate (fake * opencv.Image) int {
 }
 
 func main() {
-  opencv.Init()
+  // opencv.Init() .init is now called automatically
   TestLoadRelease()
   TestSave()  
 }

@@ -1,11 +1,11 @@
+import "testing"
 import "opencv"
 
 
 
-
-func TestLoad() {
+func TestLoad(t *testing.T) {
   filename := "test_input.png"
-  image    := opencv.LoadImage(filename, 0)
+  image    := opencv.LoadImage(filename, 0)  
 }
 
 
